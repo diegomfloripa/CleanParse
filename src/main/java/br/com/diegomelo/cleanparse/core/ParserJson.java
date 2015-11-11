@@ -19,6 +19,8 @@ public class ParserJson extends Parser {
 	private static final String TOKEN_QUOTES = "\"";
 	private static final String TOKEN_COLON = ":";
 	private static final String TOKEN_COMMA = ",";
+	private static final String EMPTY_JSON_OBJECT = TOKEN_OBJECT_START + TOKEN_OBJECT_END;
+	private static final String EMPTY_JSON_ARRAY = TOKEN_ARRAY_START + TOKEN_ARRAY_END;
 
 	/**
 	 * Serializes the specified object into its equivalent Json.
@@ -49,7 +51,7 @@ public class ParserJson extends Parser {
 	@Override
 	public OutputStream parse(List<?> listObject, OutputStream os) throws IOException, ParserException {
 		if( isNullOrEmpty(listObject) ) {
-			write(emptyJsonArray(), os);
+			write(EMPTY_JSON_ARRAY, os);
 			return os;
 		}
 		validate(listObject.get(0));
@@ -63,17 +65,17 @@ public class ParserJson extends Parser {
 		return os;
 	}
 
-	private String parse(Object obj){
+	private String parse(Object obj) throws ParserException {
 		try {
 			return toJson(obj);
 		} catch (Exception e) {
 			log.severe("Error to parse json >> " + e);
+			throw new ParserException(e);
 		}
-		return emptyJsonObject();
 	}
 
 	private String toJson(Object obj) throws ReflectiveOperationException {
-		if(isNull(obj)) return emptyJsonObject();
+		if(isNull(obj)) return EMPTY_JSON_OBJECT;
 		StringBuilder sb = new StringBuilder(TOKEN_OBJECT_START);
 		Field[] fields = obj.getClass().getDeclaredFields();
 		for (Field field : fields) {
@@ -86,7 +88,7 @@ public class ParserJson extends Parser {
 		return sb.toString();
 	}
 
-	public String getKey(Field field) {
+	private String getKey(Field field) {
 		return addQuotes(field.getName()) + TOKEN_COLON;
 	}
 
@@ -101,7 +103,7 @@ public class ParserJson extends Parser {
 	}
 
 	private String getValuesFromListElement(Field field, List<?> listObject) throws ReflectiveOperationException {
-		if( isNullOrEmpty(listObject) ) return emptyJsonArray() + TOKEN_COMMA;
+		if( isNullOrEmpty(listObject) ) return EMPTY_JSON_ARRAY + TOKEN_COMMA;
 		StringBuilder sb = new StringBuilder(TOKEN_ARRAY_START);
 		for (Object object : listObject) {
 			if( isComplexType(object) ) {
@@ -129,7 +131,7 @@ public class ParserJson extends Parser {
 	}
 
 	private String getJsonArray(Object obj, Field field) throws ReflectiveOperationException {
-		if(isNull(obj)) return emptyJsonArray();
+		if(isNull(obj)) return EMPTY_JSON_ARRAY;
 		Object[] objectArray = Wrapper.toObject(obj);
 		StringBuilder sb = new StringBuilder(TOKEN_ARRAY_START);
 		for(Object object : objectArray) {
@@ -151,14 +153,6 @@ public class ParserJson extends Parser {
 	private Object addQuotes(Object value) {
 		if( isNull(value) ) return value;
 		return TOKEN_QUOTES + value + TOKEN_QUOTES;
-	}
-
-	private String emptyJsonObject() {
-		return TOKEN_OBJECT_START + TOKEN_OBJECT_END;
-	}
-
-	private String emptyJsonArray() {
-		return TOKEN_ARRAY_START + TOKEN_ARRAY_END;
 	}
 
 	private boolean isText(Field field) {

@@ -10,4 +10,8 @@ public class ParserException extends ReflectiveOperationException {
 	public ParserException(String message) {
 		super(message);
 	}
+	
+	 public ParserException(Throwable cause) {
+	        super(cause);
+	    }
 }
