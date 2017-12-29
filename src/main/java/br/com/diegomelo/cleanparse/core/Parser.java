@@ -41,6 +41,8 @@ public abstract class Parser {
 
 //test sonar
 Field test;
+
+Field test2;
 		for (Field field : fields) {
 			if( field.isAnnotationPresent(ParseTransient.class) ) continue;
 			try {
