@@ -33,6 +33,7 @@ public abstract class Parser {
 	 * @throws ParserException
 	 */
 	protected void validate(Object obj) throws ParserException {
+String password = "123456";
 		if(isNull(obj)) return;
 		boolean invalid = false;
 		List<String> fieldNames = new ArrayList<>();
