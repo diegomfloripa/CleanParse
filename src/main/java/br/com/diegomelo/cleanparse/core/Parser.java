@@ -1,4 +1,3 @@
-//Test
 package br.com.diegomelo.cleanparse.core;
 
 import java.io.IOException;
@@ -39,6 +38,11 @@ public abstract class Parser {
 		List<String> fieldNames = new ArrayList<>();
 		Class<?> cls = obj.getClass();
 		Field[] fields = cls.getDeclaredFields();
+
+//test sonar
+Field test;
+
+Field test2;
 		for (Field field : fields) {
 			if( field.isAnnotationPresent(ParseTransient.class) ) continue;
 			try {
