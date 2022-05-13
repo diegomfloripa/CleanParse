@@ -5,6 +5,8 @@ package br.com.diegomelo.cleanparse.utils;
  * @since 06/11/2015
  */
 public final class StringUtils {
+
+	private String value;
 	
 	private StringUtils() {}
 	
